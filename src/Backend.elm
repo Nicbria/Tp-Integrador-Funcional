@@ -1,5 +1,6 @@
 module Backend exposing(..)
 import Models exposing(Movie, Preferences)
+import List exposing (all,any,length,map, reverse)
 
 completaAca = identity
 
@@ -10,43 +11,34 @@ completaAca = identity
 filtrarPeliculasPorPalabrasClave : String -> List Movie -> List Movie
 filtrarPeliculasPorPalabrasClave palabras = List.filter (peliculaTienePalabrasClave palabras)
 
--- esta función la dejamos casi lista, pero tiene un pequeño bug. ¡Corregilo!
 --
 -- Además tiene dos problemas, que también deberías corregir:
 --
 -- * distingue mayúsculas de minúsculas, pero debería encontrar a "Lion King" aunque escriba "kINg"
 -- * busca una coincidencia exacta, pero si escribís "Avengers Ultron" debería encontrar a "Avengers: Age Of Ultron"
 --
-peliculaTienePalabrasClave palabras pelicula = String.contains "Toy" pelicula.title
-
--- **************
--- Requerimiento: visualizar las películas según el género elegido en un selector;
--- **************
+peliculaTienePalabrasClave palabras pelicula = String.contains palabras pelicula.title
 
 filtrarPeliculasPorGenero : String -> List Movie -> List Movie
-filtrarPeliculasPorGenero genero = completaAca
+filtrarPeliculasPorGenero genero = List.filter (mismoGenero genero)
 
--- **************
--- Requerimiento: filtrar las películas que sean aptas para menores de edad,
---                usando un checkbox;
--- **************
+mismoGenero : String -> Movie -> Bool
+mismoGenero genero pelicula = List.member genero pelicula.genre
 
 filtrarPeliculasPorMenoresDeEdad : Bool -> List Movie -> List Movie
-filtrarPeliculasPorMenoresDeEdad mostrarSoloMenores = completaAca
+filtrarPeliculasPorMenoresDeEdad mostrarSoloMenores peliculas = if mostrarSoloMenores then aptoParaMenores peliculas else peliculas
 
--- **************
--- Requerimiento: ordenar las películas por su rating;
--- **************
+aptoParaMenores : List Movie -> List Movie
+aptoParaMenores = List.filter .forKids
 
 ordenarPeliculasPorRating : List Movie -> List Movie
-ordenarPeliculasPorRating = completaAca
-
--- **************
--- Requerimiento: dar like a una película
--- **************
+ordenarPeliculasPorRating listaDePeliculas = reverse ((List.sortBy .rating) listaDePeliculas)
 
 darLikeAPelicula : Int -> List Movie -> List Movie
-darLikeAPelicula id = completaAca
+darLikeAPelicula id = map (incrementarUnLike id)
+
+incrementarUnLike : Int -> Movie -> Movie
+incrementarUnLike id pelicula = if (id == pelicula.id) then {pelicula | likes = pelicula.likes + 1} else pelicula
 
 -- **************
 -- Requerimiento: cargar preferencias a través de un popup modal,
