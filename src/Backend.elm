@@ -47,4 +47,14 @@ incrementarUnLike id pelicula = if (id == pelicula.id) then {pelicula | likes = 
 -- **************
 
 calcularPorcentajeDeCoincidencia : Preferences -> List Movie -> List Movie
-calcularPorcentajeDeCoincidencia preferencias = completaAca
+calcularPorcentajeDeCoincidencia preferencias peliculas= preferenciasPorActor + preferenciasPorGenero + preferenciasPorPalabraClave
+
+
+preferenciasPorGenero : Preferences -> List Movie -> Int
+preferenciasPorGenero preferencias peliculas =  preferencias.genre peliculas
+
+preferenciasPorActriz : Preferences -> List Movie -> Int
+preferenciasPorActor preferencias peliculas = preferencias.favoriteActor
+
+preferenciasPorPalabraClave : Preferences -> List Movie -> Int
+preferenciasPorPalabraClave preferencias peliculas = preferencias.keywords
